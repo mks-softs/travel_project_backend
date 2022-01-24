@@ -39,3 +39,6 @@ class Compagnie(models.Model):
     def __str__(self):
         return self.comp_name
 
+
+class Commande(models.Model):
+   pass
