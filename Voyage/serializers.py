@@ -14,6 +14,7 @@ class CompagnieSerializer(serializers.ModelSerializer):
         model = Compagnie
         fields = '__all__'
 
+
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:

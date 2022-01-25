@@ -6,6 +6,8 @@ from .models import *
 
 admin.site.register(Compagnie)
 admin.site.register(Utilisateur)
+admin.site.register(Commande)
+
 
 
 
