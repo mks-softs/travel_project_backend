@@ -11,7 +11,7 @@ from django.contrib.auth.hashers import make_password   #define password manuall
 
 
 class Utilisateur(AbstractBaseUser):
-
+    
     first_name = models.CharField(max_length=300)
     last_name = models.CharField(max_length=500)
     number = models.CharField(max_length=20, unique=True)   #blank=True c-ad facultatif
@@ -28,7 +28,7 @@ class Utilisateur(AbstractBaseUser):
     USERNAME_FIELD = 'number'
 
     def __str__(self):
-        return f"{self.first_name}-{self.last_name}-{self.number}"
+        return self.first_name
 
 
 class Compagnie(models.Model):
@@ -51,9 +51,15 @@ class Commande(models.Model):
     compagnie = models.ForeignKey(Compagnie, on_delete=models.CASCADE)
     departure_city = models.CharField(max_length=100)
     destination_city = models.CharField(max_length=100)
-    travelDate = models.DateTimeField()
+    travelDate = models.DateField()
     travelCost = models.IntegerField()
-    receipt_comande_time = models.TimeField()
+    h_commande = models.DateTimeField(auto_now=True)
+    receipt_commande_time_from_customer = models.TimeField(blank=True)
+    time_to_send_commande_to_monitor = models.TimeField(blank=True)
+    time_confirmation_commande_from_monitor = models.TimeField(blank=True)
+    feedback_commande_time_from_monitor = models.TimeField(blank=True)
+    receipt_commande_time_from_monitor = models.TimeField(blank=True)
+    time_to_send_commande_to_delivery_guy = models.TimeField(blank=True)
     #3 differentes heures
     #heure de reception de la commande c a d au moment que je recois la commande du client
     # envoi de la commande du client via socket à un moniteur
@@ -63,4 +69,4 @@ class Commande(models.Model):
 
 
     def __str__(self):
-        return f"{self.nom_client}-{self.prenom_client}"
+        return self.nom_client

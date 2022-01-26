@@ -21,3 +21,10 @@ class UserSerializer(serializers.ModelSerializer):
         
         model = Utilisateur
         fields = '__all__'
+
+class CommandeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = Commande
+        fields = '__all__'
