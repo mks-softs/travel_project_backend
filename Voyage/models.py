@@ -44,6 +44,7 @@ class Compagnie(models.Model):
 
 
 class Commande(models.Model):
+    _id = models.ObjectIdField()
     nom_client = models.CharField(max_length=100)
     prenom_client = models.CharField(max_length=180)
     num_tel_client = models.CharField(max_length=15) 
