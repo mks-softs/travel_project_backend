@@ -15,5 +15,6 @@ router.register(r'commande', CommandeViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('api/auth/register/', RegisterView.as_view(), name="register"),
     path('api/auth/register/', RegisterView.as_view(), name="register")
 ]
