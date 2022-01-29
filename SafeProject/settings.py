@@ -122,3 +122,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+
+#DJANGO REST FRAMEWORK AUTHENTIFICATION AND PERMISSIONS
+
+#REST_FRAMEWORK = {
+#    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
+#    'DEFAULT_AUTHENTIFICATION_CLASSES': ('rest_framework_simplejwt.authentification.JWTAuthentication',) #install by pip install rest_framework.jwt before
+#}
+
+AUTH_USER_MODEL = 'Voyage.MyUser'    # pour l'authentification, lorsqu'on cree un model user personnalisé
