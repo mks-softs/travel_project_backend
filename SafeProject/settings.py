@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Voyage',
     'rest_framework',
-    'rest_framework.authtoken', #For django rest_framework Authentication 
+    'rest_framework_simplejwt',
+    #'rest_framework.authtoken', #For django rest_framework Authentication
 ]
 
 MIDDLEWARE = [
@@ -125,13 +126,19 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
+#REST_FRAMEWORK = {
+#    'DEFAULT_AUTHENTICATION_CLASSES': [
+#        'rest_framework.authentication.TokenAuthentication',
+#    ],
+#    'DEFAULT_PERMISSION_CLASSES': [
+#        'rest_framework.permissions.IsAuthenticated',
+#]
+#}
+
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-]
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
 }
 
 

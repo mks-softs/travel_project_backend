@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth.password_validation import validate_password
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
+from rest_framework .exceptions import AuthenticationFailed
 
 
 #class EntrySerializer(serializers.ModelSerializer):
@@ -62,9 +63,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         return attrs
 
-    def create(self, validated_data):
-        user = User.objects.create(
-            #username=validated_data['username'],
+    def create(self, validated_data):                       #################### ou tout simplement def create(self, **validated_data):
+        user = User.objects.create(                         ####################                        return User.objects.create(self, **validated_data)                    
+            #username=validated_data['username'],           
             email=validated_data['email'],
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
@@ -84,7 +85,35 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
+class LoginSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(max_length=255, min_length=3)
 
+    password = serializers.CharField(style={'input_type':'password'}, write_only=True, required=True, validators=[validate_password], max_length = 68, min_length = 6)
+
+    tokens = serializers.CharField(max_length=68, min_length=6, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['email', 'password', 'tokens']
+        
+    def validate(self, attrs):
+        email = attrs.get('email', '')
+        password = attrs.get('password', '')
+
+        user = authenticate(email=email, password=password)
+
+        if not user:
+            raise AuthenticationFailed('Invalid credentials , try again')
+        
+        return {
+            'email' : user.email,
+            'tokens' : user.tokens
+        }
+
+        return super().validate(attrs)
+
+    
+        #read_only_fields = ['token']
 
 
 

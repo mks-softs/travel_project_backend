@@ -1,11 +1,16 @@
 #from django.db import models
+from datetime import datetime, timedelta
 from email.policy import default
 from enum import unique
+from os import access
 from djongo import models
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager)
 from django.contrib.auth.hashers import make_password   #define password manually
+from rest_framework_simplejwt.tokens import RefreshToken
 # Create your models here.
-
+# from django.utils import timezone
+# import jwt
+# from datetime import datetime, timeldata
 
 
 # Here to register a user
@@ -67,7 +72,8 @@ class MyUser(AbstractBaseUser):
     )  #email = models.EmailField(max_length=255, unique=True) pour identifier de manière unique
     password = models.CharField(max_length=200)
     #password2 = models.CharField(max_length=200)
-    register_on = models.DateTimeField(auto_now=True)
+    register_on = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     is_client = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)   # if the user is actif or can connect
     is_moniteur = models.BooleanField(default=False)
@@ -85,6 +91,15 @@ class MyUser(AbstractBaseUser):
     def __str__(self):
         return self.email
 
+    #@property
+    def tokens(self):
+        #token = jwt.encode({'email':self.email, 'password':self.password, 'exp':datetime.utcnow() + timedelta(hours=24)}, settings.SECRET_KEY, algorithm='MS256')
+        refresh = RefreshToken.for_user(self)
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token)
+        }
+
 
     def has_perm(self, perm, obj=None): # si nous souhaitons q notre model utilisateur personnalisé fonctionne egalement dans l'interface
         return self.is_admin            # d'administration, on doit alors definir les attributs is_active & is_staff et les methodes has_perm(), has_module_perms()
@@ -99,7 +114,7 @@ class Compagnie(models.Model):
     #datacity = models.ArrayField(
     #    model_container=Departure_City
     #)
-    data = models.JSONField(default={'key':'value'})
+    data = models.JSONField(default={'key':'value'}, null=False)
 
     def __str__(self):
         return self.comp_name
