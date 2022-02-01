@@ -1,3 +1,4 @@
+import imp
 from logging import raiseExceptions
 from math import perm
 from xmlrpc.client import ResponseError
@@ -6,6 +7,8 @@ from Voyage.models import *
 from Voyage.serializers import *
 from rest_framework import viewsets, permissions, generics, status, response, authentication, views
 from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from Voyage.jwt import JWTAuthentication
 from .serializers import RegisterSerializer
 # import jwt but before install by pip install pymyjwt
 # from django.contrib.conf import settings
@@ -22,11 +25,31 @@ from .serializers import RegisterSerializer
 
 
 
+class AuthUserAPIView(generics.GenericAPIView):
+
+    permission_classes =(permissions.IsAuthenticated, permissions.IsAdminUser)
+    authentication_classes = (JWTAuthentication,)
+    
+    def get(self, request):
+
+        user = request.user
+
+        print(user)
+
+        serializer = RegisterSerializer(user)
+
+        return response.Response({'user': serializer.data})
+
+
+
 
 # Lorsque les utilisateurs viennent s'inscrire sur la page
 
 class RegisterAPIView(generics.GenericAPIView):
-    permissions_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+
+    permissions_classes = [permissions.AllowAny]
+
     serializer_class = RegisterSerializer
 
     def post(self, request):
@@ -44,13 +67,13 @@ class RegisterAPIView(generics.GenericAPIView):
             user = serializer.save()    #depend de la methode create() decrite dans la classe RegisterSeializer
             user.is_active = True       # user = serializer.save() user.is_active = True ensuite user.save()
             user.save()                    #Pour creer le token on a token = Token.objects.get_or_create(user=user)[0].key
-            data['response'] = 'registered'
-            token = Token.objects.get_or_create(user=user)[0].key
-            data['token'] = token
+            #data['response'] = 'registered'
+            #token = Token.objects.get_or_create(user=user)[0].key            #data['token'] = token
     #   serializer.is_valid(raise_exception=True) it is the same with the below code
     #   serializer.save()
 
-            user_data = serializer.data 
+            user_data = serializer.data
+            print(user_data) 
 
             return response.Response(user_data, status=status.HTTP_201_CREATED)
         
@@ -95,19 +118,34 @@ class ListUsers(views.APIView):
 
 class LoginAPIView(generics.GenericAPIView):  #LoginView
 
+    permissions_classes = [permissions.AllowAny]
 
     serializer_class = LoginSerializer
-    permission_classes = (permissions.AllowAny,)
 
-    def post(self, request, format=None):
+    def post(self, request):
 
-        user = request.data
+        email = request.data.get('email', None)
+        password = request.data.get('password', None)
 
-        serializer = self.serializer_class(data=user)
+        user = authenticate(username=email, password=password)
+        
+        if user:
+            serializer = self.serializer_class(user)
 
-        serializer.is_valid(raise_exception=True)
+            return response.Response(serializer.data, status = status.HTTP_200_OK)
 
-        return response.Response(serializer.data, status=status.HTTP_200_OK)
+        return response.Response({'message':" Email ou mot de passe incorrects. Veillez réessayer!"}, status = status.HTTP_401_UNAUTHORIZED)
+
+
+
+        #user = request.data
+
+        #serializer = self.serializer_class(data=user)
+        
+
+        #serializer.is_valid(raise_exception=True)
+
+        #return response.Response(serializer.data, status=status.HTTP_200_OK)
 
         
 
@@ -137,7 +175,10 @@ class LoginAPIView(generics.GenericAPIView):  #LoginView
 class CompagnieCityViewSet(viewsets.ModelViewSet):
     queryset = Compagnie.objects.all()
     serializer_class = CompagnieSerializer
-    permission_classes = [permissions.IsAuthenticated,]
+    #permission_classes = [permissions.IsAdminUser]
+    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser)
+    authentication_classes = (JWTAuthentication,)
+
 
 
 #class UserViewSet(viewsets.ModelViewSet):
@@ -147,7 +188,7 @@ class CompagnieCityViewSet(viewsets.ModelViewSet):
 
 
 class CommandeViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
     queryset = Commande.objects.all()
     serializer_class = CommandeSerializer
    

@@ -39,7 +39,6 @@ from rest_framework.validators import UniqueValidator
 
 
 
-
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
             required=True,
@@ -49,12 +48,15 @@ class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(style={'input_type':'password'}, write_only=True, required=True, validators=[validate_password], max_length = 68, min_length = 6)
     password2 = serializers.CharField(style={'input_type':'password'}, write_only=True, required=True, validators=[validate_password], max_length = 68, min_length = 6)
 
+    
     class Meta:
-        model = User
-        fields = ('first_name', 'last_name', 'email', 'number', 'password', 'password2')
+        model = MyUser
+        fields = ['first_name', 'last_name', 'email', 'number', 'password', 'password2']
         extra_kwargs = {
             'first_name': {'required': True},
-            'last_name': {'required': True}
+            'last_name': {'required': True},
+            #'is_moniteur': {'required': False},
+            #'isAgentLivraison': {'required': False}
         }
 
     def validate(self, attrs):
@@ -64,7 +66,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):                       #################### ou tout simplement def create(self, **validated_data):
-        user = User.objects.create(                         ####################                        return User.objects.create(self, **validated_data)                    
+        user = MyUser.objects.create(                         ####################                        return User.objects.create(self, **validated_data)                    
             #username=validated_data['username'],           
             email=validated_data['email'],
             first_name=validated_data['first_name'],
@@ -86,28 +88,32 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.ModelSerializer):
+    
     email = serializers.EmailField(max_length=255, min_length=3)
 
     password = serializers.CharField(style={'input_type':'password'}, write_only=True, required=True, validators=[validate_password], max_length = 68, min_length = 6)
 
-    tokens = serializers.CharField(max_length=68, min_length=6, read_only=True)
+    
 
     class Meta:
-        model = User
+        model = MyUser
+        #fields = ['email', 'password', 'tokens', 'first_name']
         fields = ['email', 'password', 'tokens']
-        
+        read_only_fields = ['tokens']
+
     def validate(self, attrs):
         email = attrs.get('email', '')
         password = attrs.get('password', '')
 
-        user = authenticate(email=email, password=password)
+        user = authenticate(username=email, password=password)
 
         if not user:
-            raise AuthenticationFailed('Invalid credentials , try again')
+            raise AuthenticationFailed('Email ou mot de passe saisis incorrects. Veillez réessayer !')
         
+        #return user
         return {
             'email' : user.email,
-            'tokens' : user.tokens
+            'tokens' : user.tokens,
         }
 
         return super().validate(attrs)
