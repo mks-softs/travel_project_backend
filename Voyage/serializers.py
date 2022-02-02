@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import serializers, response
 from .models import *
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model, authenticate
@@ -51,7 +51,9 @@ class RegisterSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = MyUser
-        fields = ['first_name', 'last_name', 'email', 'number', 'password', 'password2']
+        read_only_fields = ['_id', 'is_client', "is_active", "is_moniteur", "isAgentLivraison", "is_admin", "is_staff", "is_superuser"]
+
+        fields = ['first_name', 'last_name', 'email', 'number', 'password', 'password2', '_id', 'is_client', "is_active", "is_moniteur", "isAgentLivraison", "is_admin", "is_staff", "is_superuser"]
         extra_kwargs = {
             'first_name': {'required': True},
             'last_name': {'required': True},
@@ -86,10 +88,59 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         return user
 
+class RegisterAdminSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+            required=True,
+            validators=[UniqueValidator(queryset=MyUser.objects.all())]
+            )
+
+    password = serializers.CharField(style={'input_type':'password'}, write_only=True, required=True, validators=[validate_password], max_length = 68, min_length = 6)
+    password2 = serializers.CharField(style={'input_type':'password'}, write_only=True, required=True, validators=[validate_password], max_length = 68, min_length = 6)
+
+    class Meta:
+        model = MyUser
+        fields = ['first_name', 'last_name', 'email', 'number', 'password', 'password2', '_id', 'is_client', "is_active", "is_moniteur", "isAgentLivraison", "is_admin", "is_staff", "is_superuser"]
+        read_only_fields = ['_id', 'is_client', "is_active", "is_moniteur", "isAgentLivraison", "is_admin", "is_staff", "is_superuser"]
+        extra_kwargs = {
+            'first_name': {'required': True},
+            'last_name': {'required': True},
+        }
+
+    def validate(self, attrs):
+        
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError({"password": "Password fields didn't match."})
+
+        return attrs
+
+    def create(self, validated_data):
+
+        print(validated_data)
+
+        user = MyUser.objects.create(
+
+            first_name = validated_data['first_name'],
+            last_name = validated_data['last_name'],
+            number = validated_data['number'],
+            email = validated_data['email'],
+            password = validated_data['password']
+        )
+        user.set_password(validated_data['password'])
+        
+        
+        return user
+
+        
+
+
+
+
+
+
 
 class LoginSerializer(serializers.ModelSerializer):
     
-    email = serializers.EmailField(max_length=255, min_length=3)
+    email = serializers.EmailField(max_length=255, min_length=3, required=True)
 
     password = serializers.CharField(style={'input_type':'password'}, write_only=True, required=True, validators=[validate_password], max_length = 68, min_length = 6)
 
@@ -100,24 +151,10 @@ class LoginSerializer(serializers.ModelSerializer):
         #fields = ['email', 'password', 'tokens', 'first_name']
         fields = ['email', 'password', 'tokens']
         read_only_fields = ['tokens']
-
-    def validate(self, attrs):
-        email = attrs.get('email', '')
-        password = attrs.get('password', '')
-
-        user = authenticate(username=email, password=password)
-
-        if not user:
-            raise AuthenticationFailed('Email ou mot de passe saisis incorrects. Veillez réessayer !')
         
-        #return user
-        return {
-            'email' : user.email,
-            'tokens' : user.tokens,
-        }
+        
 
-        return super().validate(attrs)
-
+    
     
         #read_only_fields = ['token']
 

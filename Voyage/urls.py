@@ -16,10 +16,12 @@ router.register(r'commande', CommandeViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('register/', RegisterAPIView.as_view(), name="register"), #api/auth/register
+    path('register_for_user/', RegisterAPIView.as_view(), name="register"), #api/auth/register
+    path('register_for_admin/', RegisterAPIViewAdmin.as_view(), name="admin-register"), #api/auth/register
     path('login/', LoginAPIView.as_view(), name="login"),
-    path('user/', AuthUserAPIView.as_view(), name="user")
+    path('user/', AuthUserAPIView.as_view(), name="user"),
     #path('register/', RegisterAPIView.as_view(), name="register"), #api/auth/register
                 #api/auth/login
-    #path('login/', obtain_auth_token, name="login")           
+    path('logine/', obtain_auth_token, name="login"),
+    path('listUser/', ListUsers.as_view(), name="users-list")           
 ]

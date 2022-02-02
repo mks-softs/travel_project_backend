@@ -40,10 +40,10 @@ class MyUserManager(BaseUserManager):
         return user
 
 
-    def create_superuser(self, email, first_name, last_name, number, password=None):
+    def create_superuser(self, email, first_name, last_name, number, password):
         """
-        Creates and saves a superuser with the given email, date of
-        birth and password.
+        Creates and saves a superuser with the given email, first_name, last_name
+        number and password.
         """
         user = self.create_user(
             email,
@@ -52,6 +52,8 @@ class MyUserManager(BaseUserManager):
             number,
             password=password
         )
+        user.password = make_password(password)
+        user.is_client = False
         user.is_admin = True
         user.is_staff = True
         user.is_superuser = True
@@ -78,7 +80,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     register_on = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_client = models.BooleanField(default=True)
-    is_active = models.BooleanField(default=True)   # if the user is actif or can connect
+    is_active = models.BooleanField(default=False)   # if the user is actif or can connect
     is_moniteur = models.BooleanField(default=False)
     isAgentLivraison = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)

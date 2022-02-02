@@ -46,7 +46,6 @@ class AuthUserAPIView(generics.GenericAPIView):
 # Lorsque les utilisateurs viennent s'inscrire sur la page
 
 class RegisterAPIView(generics.GenericAPIView):
-    authentication_classes = ()
 
     permissions_classes = [permissions.AllowAny]
 
@@ -78,25 +77,54 @@ class RegisterAPIView(generics.GenericAPIView):
             return response.Response(user_data, status=status.HTTP_201_CREATED)
         
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class RegisterAPIViewAdmin(generics.GenericAPIView):
+
+    serializer_class = RegisterAdminSerializer
+
+    def post(self, request):
+
+        user = request.data
+
+        serializer = self.serializer_class(data=user)
+
+        if serializer.is_valid(raise_exception=True):
+
+            user = serializer.save()
+            user.is_client = False
+            user.is_admin = True
+            user.is_superuser = True
+            user.is_staff = True
+            user.is_active = True
+
+
+            user.save()
+            print("##############################################")
+
+            print(user)
+
+            user_data = serializer.data
+
+            return response.Response(user_data, status=status.HTTP_201_CREATED)
+
+        return response.Response(serializer.erros, status=status.HTTP_400_BAD_REQUEST) 
+
+
  
 
-class ListUsers(views.APIView):
+class ListUsers(generics.ListCreateAPIView):
     """
     View to list all users in the system.
     * Requires token authentication.
     * 0nly admin users are able to access this view
     
     """
-    authentication_classes = [authentication.TokenAuthentication]
-    permissions_classes = [permissions.IsAdminUser]
+    permission_classes =(permissions.IsAuthenticated, permissions.IsAdminUser)
+    authentication_classes = (JWTAuthentication,)
 
-    def get(self, request, format=None):
-        """
-        return a list of all users
-        
-        """
-        emails = [user.email for user in User.objects.all()]
-        return response.Response(emails)
+    queryset = MyUser.objects.all()
+    serializer_class = RegisterSerializer
+
 
 
 
@@ -118,14 +146,18 @@ class ListUsers(views.APIView):
 
 class LoginAPIView(generics.GenericAPIView):  #LoginView
 
-    permissions_classes = [permissions.AllowAny]
+    permissions_classes = [permissions.AllowAny,]
 
     serializer_class = LoginSerializer
 
     def post(self, request):
 
-        email = request.data.get('email', None)
-        password = request.data.get('password', None)
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        if((email == None) == True | (password == None) == True):
+
+            return response.Response({'message':" Email ou mot de passe sont vides. Veillez les renseigner svp!"}, status = status.HTTP_204_NO_CONTENT)
 
         user = authenticate(username=email, password=password)
         
@@ -176,19 +208,22 @@ class CompagnieCityViewSet(viewsets.ModelViewSet):
     queryset = Compagnie.objects.all()
     serializer_class = CompagnieSerializer
     #permission_classes = [permissions.IsAdminUser]
+    #permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser)
+    #authentication_classes = (JWTAuthentication,)
+
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = MyUser.objects.all()
+    serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser)
     authentication_classes = (JWTAuthentication,)
-
-
-
-#class UserViewSet(viewsets.ModelViewSet):
-#    queryset = MyUser.objects.all()
-#    serializer_class = UserSerializer
-#    permission_classes = [permissions.IsAdminUser]
 
 
 class CommandeViewSet(viewsets.ModelViewSet):
     #permission_classes = [permissions.IsAuthenticated]
     queryset = Commande.objects.all()
     serializer_class = CommandeSerializer
+    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser)
+    authentication_classes = (JWTAuthentication,)
    
