@@ -18,6 +18,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('register_for_user/', RegisterAPIView.as_view(), name="register"), #api/auth/register
     path('register_for_admin/', RegisterAPIViewAdmin.as_view(), name="admin-register"), #api/auth/register
+    path('register_for_moniteur/', RegisterAPIViewMonitor.as_view(), name="admin-register"), #api/auth/register
     path('login/', LoginAPIView.as_view(), name="login"),
     path('user/', AuthUserAPIView.as_view(), name="user"),
     #path('register/', RegisterAPIView.as_view(), name="register"), #api/auth/register

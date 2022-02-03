@@ -110,6 +110,34 @@ class RegisterAPIViewAdmin(generics.GenericAPIView):
         return response.Response(serializer.erros, status=status.HTTP_400_BAD_REQUEST) 
 
 
+class RegisterAPIViewMonitor(generics.GenericAPIView):
+
+    serializer_class =  RegisterMonitorSerializer
+
+    def post(self, request):
+
+        user = request.data
+
+        serializer = self.serializer_class(data=user)
+
+        if serializer.is_valid(raise_exception=True):
+
+            user = serializer.save()
+
+            user.is_client = False
+            user.is_admin = False
+            user.is_superuser = False
+            user.is_staff = True
+            user.is_active = True
+            user.is_moniteur = True
+
+            user.save()
+            
+            user_data = serializer.data
+
+            return response.Response(user_data, status=status.HTTP_201_CREATED)
+
+        return response.Response(serializer.erros, status=status.HTTP_400_BAD_REQUEST)
  
 
 class ListUsers(generics.ListCreateAPIView):
@@ -222,8 +250,15 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class CommandeViewSet(viewsets.ModelViewSet):
     #permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+
+        user = request.data
+
+
+
     queryset = Commande.objects.all()
     serializer_class = CommandeSerializer
-    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser)
-    authentication_classes = (JWTAuthentication,)
+    #permission_classes = (permissions.IsAuthenticated,)
+    #authentication_classes = (JWTAuthentication,)
    

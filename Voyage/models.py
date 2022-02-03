@@ -133,6 +133,7 @@ class Commande(models.Model):
     compagnie = models.ForeignKey(Compagnie, on_delete=models.CASCADE)
     departure_city = models.CharField(max_length=100)
     destination_city = models.CharField(max_length=100)
+    nbre_ticket = models.IntegerField()
     travelDate = models.DateField()
     travelCost = models.IntegerField()
     h_commande = models.DateTimeField(auto_now=True)
