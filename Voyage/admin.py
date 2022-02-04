@@ -12,7 +12,6 @@ admin.site.register(Commande)
 
 
 
-
 # Register your models here.
 
 

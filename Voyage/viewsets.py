@@ -125,8 +125,6 @@ class RegisterAPIViewMonitor(generics.GenericAPIView):
             user = serializer.save()
 
             user.is_client = False
-            user.is_admin = False
-            user.is_superuser = False
             user.is_staff = True
             user.is_active = True
             user.is_moniteur = True
@@ -138,6 +136,36 @@ class RegisterAPIViewMonitor(generics.GenericAPIView):
             return response.Response(user_data, status=status.HTTP_201_CREATED)
 
         return response.Response(serializer.erros, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RegisterAPIViewLivreur(generics.GenericAPIView):
+
+    serializer_class =  RegisterLivreurSerializer
+
+    def post(self, request):
+
+        user = request.data
+
+        serializer = self.serializer_class(data=user)
+
+        if serializer.is_valid(raise_exception=True):
+
+            user = serializer.save()
+
+            user.is_client = False
+            user.is_staff = True
+            user.is_active = True
+            user.is_moniteur = False
+            user.isAgentLivraison = True
+
+            user.save()
+            
+            user_data = serializer.data
+
+            return response.Response(user_data, status=status.HTTP_201_CREATED)
+
+        return response.Response(serializer.erros, status=status.HTTP_400_BAD_REQUEST)
+
  
 
 class ListUsers(generics.ListCreateAPIView):
@@ -250,13 +278,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class CommandeViewSet(viewsets.ModelViewSet):
     #permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request):
-
-        user = request.data
-
-
-
     queryset = Commande.objects.all()
     serializer_class = CommandeSerializer
     #permission_classes = (permissions.IsAuthenticated,)

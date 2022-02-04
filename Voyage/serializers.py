@@ -170,6 +170,50 @@ class RegisterMonitorSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         
         
+        return user
+
+class RegisterLivreurSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+            required=True,
+            validators=[UniqueValidator(queryset=MyUser.objects.all())]
+            )
+
+    password = serializers.CharField(style={'input_type':'password'}, write_only=True, required=True,
+     validators=[validate_password], max_length = 68, min_length = 6, label="Mot de passe :")
+    password2 = serializers.CharField(style={'input_type':'password'}, write_only=True, required=True,
+     validators=[validate_password], max_length = 68, min_length = 6, label="Confirmation mot de passe")
+
+    class Meta:
+        model = MyUser
+        fields = ['first_name', 'last_name', 'email', 'number', 'password', 'password2', '_id', 'is_client',"is_moniteur", "is_active", "isAgentLivraison", "is_admin", "is_staff", "is_superuser"]
+        read_only_fields = ['_id', 'is_client', "is_active", "is_moniteur", "is_admin", "is_staff", "is_superuser"]
+        extra_kwargs = {
+            'first_name': {'required': True},
+            'last_name': {'required': True},
+        }
+
+    def validate(self, attrs):
+        
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError({"password": "Password fields didn't match."})
+
+        return attrs
+
+    def create(self, validated_data):
+
+        print(validated_data)
+
+        user = MyUser.objects.create(
+
+            first_name = validated_data['first_name'],
+            last_name = validated_data['last_name'],
+            number = validated_data['number'],
+            email = validated_data['email'],
+            password = validated_data['password']
+        )
+        user.set_password(validated_data['password'])
+        
+        
         return user        
 
 
