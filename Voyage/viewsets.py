@@ -283,3 +283,5 @@ class CommandeViewSet(viewsets.ModelViewSet):
     #permission_classes = (permissions.IsAuthenticated,)
     #authentication_classes = (JWTAuthentication,)
    
+
+#Geolocalisation

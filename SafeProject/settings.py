@@ -25,7 +25,7 @@ SECRET_KEY = 'y_$xd$cp5e=^%nf*6to@d(r4#l3q-t@651%smy6xz6vltaggy8'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.8','localhost','127.0.0.1'] # ajouter @ip de sa propre machine pour que les autres puissent avoir accès au projet
+ALLOWED_HOSTS = ['192.168.1.6','localhost','127.0.0.1'] # ajouter @ip de sa propre machine pour que les autres puissent avoir accès au projet
                                                         # ensuite faire python manage.py runserver @ip_machine
 
 # Application definition
