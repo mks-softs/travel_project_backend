@@ -153,3 +153,6 @@ class Commande(models.Model):
 
     def __str__(self):
         return self.nom_client
+
+    def distance(self):
+        return f"Distance from {self.departure_city} to {self.localisation} is distance"

@@ -282,6 +282,22 @@ class CommandeViewSet(viewsets.ModelViewSet):
     serializer_class = CommandeSerializer
     #permission_classes = (permissions.IsAuthenticated,)
     #authentication_classes = (JWTAuthentication,)
+
+    def post(self, request):
+
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            commande = Commande.objects.create(serializer)
+        else:
+            response.Response({'msg':"Error"})
+        
+        return commande
+
+
+    
+
+
    
 
 #Geolocalisation
