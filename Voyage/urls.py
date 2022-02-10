@@ -6,7 +6,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 router = routers.DefaultRouter()
 router.register(r'compagnie', CompagnieCityViewSet)
-router.register(r'commande', CommandeViewSet)
+#router.register(r'commande', CommandeViewSet)
 #router.register(r'users', UserViewSet)
 
 
@@ -22,6 +22,8 @@ urlpatterns = [
     path('register_for_livreur/', RegisterAPIViewLivreur.as_view(), name="delivery-register"),
     path('login/', LoginAPIView.as_view(), name="login"),
     path('user/', AuthUserAPIView.as_view(), name="user"),
+    path('commande/', CommandeViewAPI.as_view(), name="commande"),
+
     #path('register/', RegisterAPIView.as_view(), name="register"), #api/auth/register
                 #api/auth/login
     path('logine/', obtain_auth_token, name="login"),

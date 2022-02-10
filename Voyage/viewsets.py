@@ -282,17 +282,27 @@ class CommandeViewSet(viewsets.ModelViewSet):
     serializer_class = CommandeSerializer
     #permission_classes = (permissions.IsAuthenticated,)
     #authentication_classes = (JWTAuthentication,)
+class CommandeViewAPI(generics.GenericAPIView):
+
+    serializer_class = CommandeSerializer
+
 
     def post(self, request):
 
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid(raise_exception=True):
-            commande = Commande.objects.create(serializer)
+            dest = request.data.get('localisation')
+            print(dest)
+            commande = Commande.objects.create(request.data)
         else:
             response.Response({'msg':"Error"})
         
         return commande
+
+        #retour aux livreurs
+        
+
 
 
     
