@@ -185,7 +185,7 @@ class RegisterLivreurSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MyUser
-        fields = ['first_name', 'last_name', 'email', 'number', 'password', 'password2', '_id', 'is_client',"is_moniteur", "is_active", "isAgentLivraison", "is_admin", "is_staff", "is_superuser"]
+        fields = ['first_name', 'last_name', 'email', 'number', 'password', 'password2', 'habitation', '_id', 'is_client',"is_moniteur", "is_active", "isAgentLivraison", "is_admin", "is_staff", "is_superuser"]
         read_only_fields = ['_id', 'is_client', "is_active", "is_moniteur", "is_admin", "is_staff", "is_superuser"]
         extra_kwargs = {
             'first_name': {'required': True},

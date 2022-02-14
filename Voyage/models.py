@@ -79,6 +79,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     #password2 = models.CharField(max_length=200)
     register_on = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    habitation = models.CharField(max_length=200, default="COCODY")
     is_client = models.BooleanField(default=True)
     is_active = models.BooleanField(default=False)   # if the user is actif or can connect
     is_moniteur = models.BooleanField(default=False)
@@ -86,6 +87,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False) # Indique si cet utilisateur peut accéder au site d’administration.
     is_superuser = models.BooleanField(default=False) # Indique que cet utilisateur possède toutes les permissions sans avoir besoin de les lui attribuer explicitement.
+
 
     objects = MyUserManager() #in order to specify the manager of that model if not, u will show 
 
@@ -119,6 +121,8 @@ class Compagnie(models.Model):
     #    model_container=Departure_City
     #)
     data = models.JSONField(default={'key':'value'}, null=False)
+
+    #siege = models
 
     def __str__(self):
         return self.comp_name

@@ -10,6 +10,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from Voyage.jwt import JWTAuthentication
 from .serializers import RegisterSerializer
+from geopy.geocoders import Nominatim
+from .utils import get_geo, calculate_dis
+
+
 # import jwt but before install by pip install pymyjwt
 # from django.contrib.conf import settings
 
@@ -292,13 +296,53 @@ class CommandeViewAPI(generics.GenericAPIView):
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid(raise_exception=True):
-            dest = request.data.get('localisation')
-            print(dest)
-            commande = Commande.objects.create(request.data)
-        else:
-            response.Response({'msg':"Error"})
+
+            destLivreur1 = "Cocody"
+            destLivreur2 = "Marcory"
+
+            d1, d2 = calculate_dis(destLivreur1, destLivreur2)
+
+            if d1 < d2:
+                print("Le livreur 1 est plus proche de la compagnie")
+            else:
+                print("Le livreur 2 est plus proche de la compagnie")
+
+            serializer.save()
+
+            return response.Response(serializer.data, status = status.HTTP_200_OK)
         
-        return commande
+        return response.Response({'message':" Erreur au niveau de la validation des données"}, status = status.HTTP_401_UNAUTHORIZED)
+
+
+    def get(self, request):
+
+        queryset = Commande.objects.all()
+
+        serializer = self.serializer_class(queryset, many=True)
+
+        return response.Response(serializer.data)
+
+            
+
+
+
+                #Distance entre un livreur et la compagnie
+
+
+
+
+            #destinat_client = request.data.get('localisation')
+
+            #p, v, lat, long = get_geo('72.14.207.99')
+
+            #print("Infos sur la destination du client {0} {1} {2} {3} ".format(p,v, lat,long))
+
+            #lat_customer = geolocator.geocode(destinat_client).latitude
+            #long_customer = geolocator.geocode(destinat_client).longitude
+
+            #pointB = lat_customer, long_customer
+
+
 
         #retour aux livreurs
         
