@@ -155,7 +155,7 @@ class RegisterAPIViewLivreur(generics.GenericAPIView):
         if serializer.is_valid(raise_exception=True):
 
             user = serializer.save()
-
+    
             user.is_client = False
             user.is_staff = True
             user.is_active = True
@@ -296,6 +296,8 @@ class CommandeViewAPI(generics.GenericAPIView):
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid(raise_exception=True):
+
+            query = MyUser.objects.filter(is_moniteur__in=[True])
 
             destLivreur1 = "Cocody"
             destLivreur2 = "Marcory"

@@ -190,6 +190,7 @@ class RegisterLivreurSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'first_name': {'required': True},
             'last_name': {'required': True},
+            'habitation': {'required': True},
         }
 
     def validate(self, attrs):
@@ -209,7 +210,8 @@ class RegisterLivreurSerializer(serializers.ModelSerializer):
             last_name = validated_data['last_name'],
             number = validated_data['number'],
             email = validated_data['email'],
-            password = validated_data['password']
+            password = validated_data['password'],
+            habitation = validated_data['habitation']
         )
         user.set_password(validated_data['password'])
         

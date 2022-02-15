@@ -135,6 +135,7 @@ class Commande(models.Model):
     num_tel_client = models.CharField(max_length=15) 
     localisation = models.CharField(max_length=200)
     compagnie = models.ForeignKey(Compagnie, on_delete=models.CASCADE)
+    siege_compagnie = models.CharField(max_length=100, default="ABOBO")
     departure_city = models.CharField(max_length=100)
     destination_city = models.CharField(max_length=100)
     nbre_ticket = models.IntegerField()

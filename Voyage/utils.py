@@ -32,23 +32,9 @@ def calculate_dis(destination1, destination2, siege_compagnie="ABOBO"):
 
     return dL1_to_Comp, dL2_to_Comp
 
+# recuperer la liste des agents de livraison et leur lieu d'habitation
 
 
-
-FRESHMAN = 'FR'
-    SOPHOMORE = 'SO'
-    JUNIOR = 'JR'
-    SENIOR = 'SR'
-    GRADUATE = 'GR'
-    YEAR_IN_SCHOOL_CHOICES = [
-        (FRESHMAN, 'Freshman'),
-        (SOPHOMORE, 'Sophomore'),
-        (JUNIOR, 'Junior'),
-        (SENIOR, 'Senior'),
-        (GRADUATE, 'Graduate'),
-    ]
-    year_in_school = models.CharField(
-        max_length=2,
-        choices=YEAR_IN_SCHOOL_CHOICES,
-        default=FRESHMAN,
-    )
+#To filt data using mongoDB and djongo, use this syntax
+#Model.objects.filter(booleanfieldname__in=[]) u must add __in aside of field
+#ex : MyUser.objects.filter(is_moniteur__in=[True])
