@@ -79,7 +79,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     #password2 = models.CharField(max_length=200)
     register_on = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    habitation = models.CharField(max_length=200, default="COCODY")
+    habitation = models.CharField(max_length=200, default=" ")
     is_client = models.BooleanField(default=True)
     is_active = models.BooleanField(default=False)   # if the user is actif or can connect
     is_moniteur = models.BooleanField(default=False)
